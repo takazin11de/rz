@@ -1,0 +1,442 @@
+<!DOCTYPE html><html><head><meta http-equiv="X-UA-Compatible"content="IE=edge">
+<title></title>
+<meta charset="utf-8"><meta name="description"content=""><meta name="author"
+content=""><meta name="viewport"content="width=device-width"><script>
+  var ScriptNameSpace=ScriptNameSpace||{};
+  (function(){"use strict";let _=ScriptNameSpace; // using namespace
+    var std=std||{};
+    (function(){"use strict";let _=std; // using namespace
+      /* スタイルを動的指定 */
+      _.SetStyle = function(obj,property,value){
+        obj.style.setProperty(property, value);
+      }
+      /* デフォルト引数を指定 */
+      _.DefaultArg = function(argument, default_value){
+        if(argument==undefined){return(default_value);}else{return(argument);}
+      }
+      /* オブジェクトをマージ */
+      _.MergeObj = function(obj1, obj2){
+        let obj3 = {};
+        for(let key in obj1){
+          obj3[key] = obj1[key];
+        }
+        for(let key in obj2){
+          obj3[key] = obj2[key];
+        }
+        return obj3;
+      }
+    }());
+  }());
+</script>
+<script>
+var canvas ;
+var ctx ;
+var ctx_ ;
+var ctx1 ;
+var ctx2 ;
+
+var winx=1800;
+var winy=1200;
+var key=[];
+var mouse = 0;
+var mousex = 0;
+var mousey = 0;
+var click_mousex = 0;
+var click_mousey = 0;
+function page_onload()
+{
+val=1;
+var ctx;
+
+  canvas_ = document.getElementById("canvas_");
+  ctx_ = canvas_.getContext("2d");
+  canvas_.setAttribute("width", 1800 * val);
+  canvas_.setAttribute("height",1200 * val);
+
+  canvas1 = document.getElementById("canvas01");
+  ctx1 = canvas1.getContext("2d");
+  canvas1.setAttribute("width", 1800 * val);
+  canvas1.setAttribute("height",1200 * val);
+
+  canvas2 = document.getElementById("canvas02");
+  ctx2 = canvas2.getContext("2d");
+  canvas2.setAttribute("width", 1800 * val);
+  canvas2.setAttribute("height",1200 * val);
+
+
+// マウスイベントリスナー登録
+canvas1.onmousemove = function(e) {
+    var rect = e.target.getBoundingClientRect();
+    mousex = e.clientX - rect.left;
+    mousey = e.clientY - rect.top;
+};
+
+canvas1.onmousedown = function(e) {
+        var rect = e.target.getBoundingClientRect();
+        mouse = 1;
+        click_mousex = e.clientX - rect.left;
+        click_mousey = e.clientY - rect.top;
+        };
+
+canvas1.onmouseup = function(e) {
+        mouse = 0;
+
+        };
+document.onkeyup = function (e){
+// InternetExplorer 用
+if (!e)	e = window.event;
+key[e.keyCode]=0;
+
+return;
+};
+
+document.onkeydown = function (e){
+
+// InternetExplorer 用
+if (!e)	e = window.event;
+num=e.keyCode;
+key[num]=1;
+
+};
+document.onmouseout = function (e){
+ mouse = 0;
+};
+
+window.onblur = function (){
+
+// 配列をクリアする
+
+var i;
+  for(i=0;i<256;i++)
+    {
+    key[i]=0;
+    }
+
+    mouse = 0;
+};
+
+  ctx1.scale(val,val);
+  ctx1.fillStyle = "rgb(0,0,0)";
+  ctx1.fillRect (0, 0, winx, winy);
+
+  ctx1.fillStyle = "rgb(255,255,255)";
+  ctx1.fillRect (1, 1, winx-2, winy-2);
+
+  ctx2.scale(val,val);
+  ctx2.fillStyle = "rgb(0,0,0)";
+  ctx2.fillRect (0, 0, winx, winy);
+
+  ctx2.fillStyle = "rgb(255,255,255)";
+  ctx2.fillRect (1, 1, winx-2, winy-2);
+
+var i;
+  for(i=0;i<256;i++)
+    {
+    key[i]=0;
+    }
+  main();
+}
+function use_ctx1(){
+ctx=ctx1;
+}
+function use_ctx2(){
+ctx=ctx2;
+}
+var color_str;
+var stroke_color_str;
+var fill_color_str;
+
+function color(r,g,b){
+color_str="rgb("+r+","+g+","+b+")";
+stroke_color(r,g,b);
+fill_color(r,g,b);
+}
+function stroke_color(r,g,b){
+stroke_color_str="rgb("+r+","+g+","+b+")";
+}
+function fill_color(r,g,b){
+fill_color_str="rgb("+r+","+g+","+b+")";
+}
+
+
+var f_stroke=1
+function stroke_on(){
+f_strok=1;
+}
+function stroke_off(){
+f_strok=0;
+}
+var f_fill=1;
+function fill_on(){
+f_fill=1;
+}
+function fill_off(){
+f_fill=0;
+}
+
+var posx=0;
+var posy=0;
+function position(x,y){
+posx=x;
+posy=y;
+}
+
+var font_name;
+var font_size;
+function font(fn,fs){
+font_name=fn;
+font_size=fs;
+}
+function text(str){
+ctx.fillStyle = fill_color_str;
+ctx.font = ""+font_size+"px '"+font_name+"'";
+ctx.textAlign = "left";
+ctx.textBaseline = "top";
+ctx.fillText(str, posx+0.5, posy+0.5);
+}
+
+
+function line(x1,y1,x2,y2){
+ctx.strokeStyle= stroke_color_str;
+ctx.beginPath();
+ctx.moveTo(x1+0.5,y1+0.5);
+ctx.lineTo(x2+0.5,y2+0.5);
+  ctx.closePath();
+  ctx.stroke();
+
+}
+function circle(x,y,r){
+ctx.strokeStyle= stroke_color_str;
+ctx.fillStyle = color_str;
+ctx.beginPath();
+  ctx.arc(x+0.5, y+0.5, r, 0, Math.PI*2, false);
+  ctx.closePath();
+
+if(f_stroke){
+  ctx.stroke();
+}
+if(f_fill){
+  ctx.fill();
+}
+
+
+}
+function arc(x,y,r,s,e,f){
+ctx.strokeStyle= stroke_color_str;
+ctx.fillStyle = color_str;
+ctx.beginPath();
+  ctx.arc(x+0.5, y+0.5, r, s, e, f);
+
+if(f_stroke){
+  ctx.stroke();
+}
+if(f_fill){
+  ctx.fill();
+}
+}
+function arc2(x,y,r,s,e,f){
+ctx.strokeStyle= stroke_color_str;
+ctx.fillStyle = color_str;
+ctx.beginPath();
+  ctx.arc(x+0.5, y+0.5, r, s, e, f);
+  ctx.closePath();
+
+if(f_stroke){
+  ctx.stroke();
+}
+if(f_fill){
+  ctx.fill();
+}
+
+}
+function line_width(a){
+ctx.lineWidth=a;
+}
+function rect(x1,y1,x2,y2){
+
+
+ctx.strokeStyle= stroke_color_str;
+ctx.fillStyle = color_str;
+ctx.beginPath();
+  ctx.moveTo(x1+0.5,y1+0.5);
+ctx.lineTo(x2+0.5,y1+0.5);
+ctx.lineTo(x2+0.5,y2+0.5);
+ctx.lineTo(x1+0.5,y2+0.5);
+  ctx.closePath();
+if(f_stroke){
+  ctx.stroke();
+}
+if(f_fill){
+  ctx.fill();
+}
+
+}
+</script>
+<script>
+function mtx(str,x,y,sp,size){
+  this.str=str;
+  this.x=x;
+  this.y=y;
+  this.sp=sp;
+  this.size=size;
+}
+mtx.prototype.draw = function () {
+  let px=posx;
+  let py=posy;
+  let fs=font_size;
+  font_size=this.size;
+
+  for(let i=0;i<this.str.length;i++){
+    if(0<=(this.x+font_size/2)&& (this.x+font_size/2)<1800 &&0<=(this.y+font_size*i+font_size/2)&& (this.y+font_size*i+font_size/2)<1200 ){
+      let imagedata = ctx2.getImageData(this.x+font_size/2, this.y+font_size*i+font_size/2, 1, 1);
+      if(128 < imagedata.data[0]){
+        let mz=Math.random()*(255-64)+64;
+        color(mz,0,mz);
+
+      }else{
+        let mz=Math.random()*(64-48)+48;
+        color(mz,0,mz);
+      }
+    }else{
+      let mz=Math.random()*(64-48)+48;
+      color(mz,0,mz);
+    }
+    position(this.x,this.y+font_size*i);
+    text(this.str[i]);
+  }
+  font_size=fs;
+  position(px,py);
+
+}
+mtx.prototype.step = function () {
+this.y=this.y+this.sp;
+}
+var mtx_a;
+function main(){
+  //mtx_a=new mtx("りなぞう", 100,100,3,30);
+  mtx_a=[];
+	setInterval(loop,30);//30ミリ秒おきにloop()を呼び出す
+}
+var str_c=0;
+function loop(){
+/*
+	color(240,240,255);
+	fill_on();
+	rect(0,0,winx,winy);
+
+	color(0,0,0);
+	if(mouse){
+		color(255,0,0);
+	}
+	font("ＭＳ ゴシック",100);
+	position(100,100);
+	text("hello!");
+	fill_off();
+	line(mousex,0,mousex,winy);
+	line(0,mousey,winx,mousey);
+	circle(mousex,mousey,100);
+	rect(mousex-120,mousey-120,mousex+120,mousey+120);
+  */
+  use_ctx2();
+  color(0,0,0);
+	fill_on();
+	rect(0,0,winx,winy);
+  color(255,255,255);
+  font("ＭＳ ゴシック",18);
+
+
+	position(100,100);
+  //text("りなぞう");
+  //text_tate("りなぞう");
+  fill_on();
+  circle(900-350,600-100,150);
+  circle(900+350,600-100,150);
+  fill_off();
+  line_width(20);
+  arc(900-450, 600, 400, -Math.PI/2-Math.PI/4, -Math.PI/2+Math.PI/4, false);
+  arc(900+450, 600, 400, -Math.PI/2-Math.PI/4, -Math.PI/2+Math.PI/4, false);
+
+  arc2(900, 600+200, 200, Math.PI/2-Math.PI/2.3, Math.PI/2+Math.PI/2.3, false);
+
+  arc(900, 100, 1100, Math.PI/2-Math.PI/2, Math.PI/2+Math.PI/2, false);
+
+  line(900-200,600-500,900+200,600-500);
+  line(900-100,600-300,900+100,600-350);
+  line(900-70,600-100,900+70,600-200);
+  //line(900-50,600+100,900+50,600+50);
+  line(900-70,600+500,900+70,600+500);
+
+  use_ctx1();
+  color(0,0,0);
+  fill_on();
+  rect(0,0,winx,winy);
+  color(255,255,255);
+  font("ＭＳ ゴシック",18);
+
+
+  position(100,100);
+  for(let i=0;i<3;i++){
+    let str=["りなぞう","りなぞう","りなぞう","りなぞう","ケムリクサ","ねぇね","リナゾウ","なんだナ！","じゃあないかナ！","ナナナ！","出番","でばん","デバン","たっさん","タッサン"];
+  mtx_a.push(new mtx(str[str_c], Math.random()*1900-50, -Math.random()*1000,Math.random()*2+4,Math.random()*50+18));
+  str_c++;
+  if(str_c>=str.length){
+    str_c=0;
+  }
+}
+
+for(let i=0;i<mtx_a.length;i++){
+  mtx_a[i].draw();
+  mtx_a[i].step();
+  if(mtx_a[i].y>1200){
+    mtx_a.splice(i,1);
+  }
+}
+ctx_.drawImage(canvas1,0,0)
+  //text_tate("りなぞう");
+
+
+
+}
+function text_tate(str){
+  let px=posx;
+  let py=posy;
+  for(let i=0;i<str.length;i++){
+    position(px,py+font_size*i);
+    text(str[i]);
+  }
+  position(px,py);
+
+
+}
+
+</script>
+<style>/*reset css*/
+abbr,address,article,aside,audio,b,blockquote,body,canvas,caption,cite,code,dd,
+del,details,dfn,div,dl,dt,em,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,
+h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,
+object,ol,p,pre,q,samp,section,small,span,strong,sub,summary,sup,table,tbody,td,
+tfoot,th,thead,time,tr,ul,var,video{margin:0;padding:0;border:0;outline:0;
+font-size:100%;vertical-align:baseline;background:0 0}html{height:100%}body{
+line-height:1;height:100%}article,aside,details,figcaption,figure,footer,header,
+hgroup,menu,nav,section{display:block}nav ul{list-style:none}blockquote,q{quotes
+:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:
+none}a{margin:0;padding:0;font-size:100%;vertical-align:baseline;background:0 0}
+ins{background-color:#ff9;color:#000;text-decoration:none}mark{background-color:
+#ff9;color:#000;font-style:italic;font-weight:700}del{text-decoration:
+line-through}abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}table{
+border-collapse:collapse;border-spacing:0}hr{display:block;height:1px;border:0;
+border-top:1px solid #ccc;margin:1em 0;padding:0}input,select{vertical-align:
+middle}*,::after,::before{box-sizing:border-box}html,body{width:100%;}body{
+position:absolute;top:0;left:0;right:0;bottom:0;overflow:auto;text-decoration:
+none;-webkit-text-size-adjust:none;cursor:default;}</style><style>/*user css*/
+body{
+  background-color:#000;color:#000;
+  font-family:sans-serif;font-weight:400;font-size:15px;
+}
+body>div{background-color:#FFF;width:100%;height:100%;}</style>
+</head><body  onload="page_onload();"><div>
+<canvas id="canvas_" ></canvas>
+<canvas id="canvas01" style="display:none;"></canvas>
+<canvas id="canvas02" style="display:none;"></canvas>
+
+</div></body></html>
